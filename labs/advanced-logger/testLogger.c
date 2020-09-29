@@ -3,7 +3,7 @@
 #include "logger.h"
 
 int main(int argc, char **argv){
-
+    if(argc > 1){
     printf("%d\n", atoi(argv[1]));
     switch(atoi(argv[1])) {
     case 1:
@@ -30,6 +30,8 @@ int main(int argc, char **argv){
 	errorf("Invalid test case");
 	break;
     }
-
+    } else {
+	    errorf("Invalid test case\n");
+    }
     return 0;
 }
