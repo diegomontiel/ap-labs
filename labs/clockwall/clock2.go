@@ -2,34 +2,45 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"net"
+	"os"
 	"time"
 )
 
-func handleConn(c net.Conn) {
-	defer c.Close()
+func handleConn(conn net.Conn) {
+	defer conn.Close()
 	for {
 		_, err := io.WriteString(c, time.Now().Format("15:04:05\n"))
 		if err != nil {
-			return // e.g., client disconnected
+			return
 		}
 		time.Sleep(1 * time.Second)
 	}
 }
 
 func main() {
-	listener, err := net.Listen("tcp", "localhost:9090")
+	args := os.Args[1:]
+	if len(args) < 3 {
+		log.Print("Missing parameters")
+	} else if args[0] != "-port" {
+		log.Print("Missing flag -port")
+	}
+
+	port := "localhost:" + args[1]
+
+	listener, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatal(err)
 	}
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
-			log.Print(err) // e.g., connection aborted
+			log.Print(err)
 			continue
 		}
-		go handleConn(conn) // handle connections concurrently
+		go handleConn(conn)
 	}
 }
